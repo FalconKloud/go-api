@@ -12,14 +12,14 @@ go get -u github.com/swaggo/swag/cmd/swag
 
 3. Create the Main Application
 Create a main.go file and set up a basic API using the Gin framework.
-// main.go
 package main
 
 import (
+	_ "github.com/FalconKloud/go-api/docs" // Ensure this path is correct after generating docs
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
-	_ "github.com/yourusername/golang-api/docs"
 )
 
 // @title Swagger Example API
@@ -27,29 +27,28 @@ import (
 // @description This is a sample server Petstore server.
 // @termsOfService http://swagger.io/terms/
 
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host localhost:8080
-// @BasePath /
+// Ping example
+// @Summary Ping example
+// @Description Do ping
+// @Tags example
+// @Accept  json
+// @Produce  json
+// @Success 200 {string} string "pong"
+// @Router /ping [get]
+func Ping(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "pong",
+	})
+}
 
 func main() {
 	r := gin.Default()
-
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/ping", Ping)
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
-	r.Run() // listen and serve on 0.0.0.0:8080
+	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
+
 
 4. Generate Swagger Documentation
 To generate the Swagger documentation, you need to use the swag tool. First, make sure you have installed it:
